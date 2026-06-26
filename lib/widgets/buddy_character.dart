@@ -2,13 +2,50 @@ import 'package:flutter/material.dart';
 import '../providers/story_provider.dart';
 import '../theme/app_theme.dart';
 
-class BuddyCharacter extends StatelessWidget {
+class BuddyCharacter extends StatefulWidget {
   final BuddyState state;
 
   const BuddyCharacter({super.key, required this.state});
 
+  @override
+  State<BuddyCharacter> createState() => _BuddyCharacterState();
+}
+
+class _BuddyCharacterState extends State<BuddyCharacter>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void didUpdateWidget(BuddyCharacter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state == BuddyState.correctAnswer) {
+      // faster bounce on success
+      _controller.duration = const Duration(milliseconds: 400);
+    } else if (widget.state == BuddyState.playingAudio) {
+      // medium pace while talking
+      _controller.duration = const Duration(milliseconds: 800);
+    } else {
+      // slow breathing for idle/other states
+      _controller.duration = const Duration(milliseconds: 1500);
+    }
+  }
+
   IconData _getIcon() {
-    switch (state) {
+    switch (widget.state) {
       case BuddyState.idle:
         return Icons.smart_toy_outlined;
       case BuddyState.loadingAudio:
@@ -27,7 +64,7 @@ class BuddyCharacter extends StatelessWidget {
   }
 
   Color _getColor() {
-    switch (state) {
+    switch (widget.state) {
       case BuddyState.idle:
         return AppColors.primary;
       case BuddyState.loadingAudio:
@@ -46,20 +83,32 @@ class BuddyCharacter extends StatelessWidget {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 140,
-      height: 140,
-      decoration: BoxDecoration(
-        color: _getColor().withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: _getColor().withValues(alpha: 0.4), width: 2),
-      ),
-      child: Center(
-        child: Icon(
-          _getIcon(),
-          size: 72,
-          color: _getColor(),
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Container(
+        width: 140,
+        height: 140,
+        decoration: BoxDecoration(
+          color: _getColor().withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: _getColor().withValues(alpha: 0.4),
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Icon(
+            _getIcon(),
+            size: 72,
+            color: _getColor(),
+          ),
         ),
       ),
     );
