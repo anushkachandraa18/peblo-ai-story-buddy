@@ -206,14 +206,19 @@ the dependency list minimal for performance on mid-range devices.
   I manually wrote all import statements at the top of each file,
   which also gave me a clearer understanding of the dependency
   relationships between files.
+**What I built beyond the core requirements:**
+- Animated buddy with breathing/bounce animation using
+  `AnimationController` — speed changes based on app state
+  (slow idle breathing → fast bounce on correct answer)
+- Confetti animation on correct answer using the `confetti` package
+- Full screen green success overlay with celebration message
+- Subtle purple gradient background for a more joyful, kid-friendly feel
 
 **What I would add with more time:**
-- Animated buddy expressions using a full `AnimationController`
-  per state (designed but cut for time)
 - ElevenLabs API integration with `flutter_tts` as offline fallback
-- Confetti package for the success celebration
 - Unit tests for `QuizModel.fromJson()` and `StoryProvider`
   state transitions
+- Multiple story levels with difficulty progression
 
 ---
 
