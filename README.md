@@ -206,6 +206,7 @@ the dependency list minimal for performance on mid-range devices.
   I manually wrote all import statements at the top of each file,
   which also gave me a clearer understanding of the dependency
   relationships between files.
+  
 **What I built beyond the core requirements:**
 - Animated buddy with breathing/bounce animation using
   `AnimationController` — speed changes based on app state
